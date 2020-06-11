@@ -1,0 +1,24 @@
+- name: Create a instance
+  hosts: localhost
+
+  vars:
+    keypair: test
+    instance_type: t2.micro
+    security_group: default
+    image: ami-09d95fab7fff3776c
+    region: us-east-1
+    vpc_subnet_id: subnet-58455b12
+  tasks:
+    - name: Create a public zone
+      route53_zone:
+        zone: test.com
+        comment: public zone
+
+    - name: Create alias
+      route53:
+        state: present
+        zone: test.com
+        record: elb.test.com
+        type: CNAME
+        value: "{{ elb.dns_name }}"
+        alias: True

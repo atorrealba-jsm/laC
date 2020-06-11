@@ -1,0 +1,23 @@
+- name: Create a instance
+  hosts: localhost
+
+  vars:
+    keypair: test
+    instance_type: t2.micro
+    security_group: default
+    image: ami-09d95fab7fff3776c
+    region: us-east-1
+    vpc_subnet_id: subnet-58455b12
+  tasks:
+    - local_action:
+        module: ec2_elb_lb
+        name: "elb-workpress"
+        state: present
+        zones:
+          - us-east-1a
+          - us-east-1d
+        listeners:
+          - protocol: http
+            load_balancer_port: 80
+            instance_port: 80
+            proxy_protocol: True

@@ -1,0 +1,32 @@
+- name: Create a instance
+  hosts: localhost
+
+  vars:
+    keypair: test
+    instance_type: t2.micro
+    security_group: default
+    image: ami-09d95fab7fff3776c
+    region: us-east-1
+    vpc_subnet_id: subnet-58455b12
+  tasks:
+    - name: Create RDS
+      rds:
+        command: create
+        instance_name: master-db
+        db_engine: MySQL
+        size: 10
+        instance_type: db.t2.micro
+        availability_zone: us-east-1a
+        username: mysql_admin
+        password: password
+        read_replica: yes
+        tags:
+          Environment: dev
+          Application: cms
+
+      rds:
+        command: replicate
+        instance_name: replica-db
+        source_instance: master-db
+        wait: yes
+        wait_timeout: 600
